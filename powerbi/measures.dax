@@ -1,0 +1,47 @@
+-- Assumes a fact_order_items table related to customer, product and date dimensions.
+Gross Value = 
+CALCULATE(
+    SUMX(fact_order_items, fact_order_items[price] + fact_order_items[freight_value]),
+    fact_order_items[order_status] = "delivered"
+)
+
+Delivered Orders =
+CALCULATE(
+    DISTINCTCOUNT(fact_order_items[order_id]),
+    fact_order_items[order_status] = "delivered"
+)
+
+Average Order Value = DIVIDE([Gross Value], [Delivered Orders])
+
+Units Sold =
+CALCULATE(
+    COUNT(fact_order_items[order_item_id]),
+    fact_order_items[order_status] = "delivered"
+)
+
+Unique Customers =
+CALCULATE(
+    DISTINCTCOUNT(fact_order_items[customer_unique_id]),
+    fact_order_items[order_status] = "delivered"
+)
+
+Repeat Customers =
+COUNTROWS(
+    FILTER(
+        VALUES(fact_order_items[customer_unique_id]),
+        CALCULATE(
+            DISTINCTCOUNT(fact_order_items[order_id]),
+            fact_order_items[order_status] = "delivered"
+        ) >= 2
+    )
+)
+
+Repeat Customer Rate = DIVIDE([Repeat Customers], [Unique Customers])
+
+Revenue MoM % =
+VAR PreviousMonth =
+    CALCULATE([Gross Value], DATEADD('Date'[Date], -1, MONTH))
+RETURN
+    DIVIDE([Gross Value] - PreviousMonth, PreviousMonth)
+
+Revenue YTD = TOTALYTD([Gross Value], 'Date'[Date])
