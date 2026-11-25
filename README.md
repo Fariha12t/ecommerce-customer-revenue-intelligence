@@ -24,10 +24,10 @@ This project demonstrates an end-to-end e-commerce analytics workflow: generatin
 
 The analysis focuses on six business areas:
 
-| 📈 Revenue performance | 🛒 Product performance | 👥 Customer intelligence |
+|  Revenue performance |  Product performance |  Customer intelligence |
 |:---|:---|:---|
 | Monthly revenue, orders and AOV | Category contribution and top products | RFM scoring and repeat purchasing |
-| 🌍 Geographic performance | 🔁 Retention analysis | 🧭 Executive reporting |
+|  Geographic performance |  Retention analysis |  Executive reporting |
 | State and city comparisons | Cohort-based customer activity | KPI measures and dashboard design |
 
 > **Dataset transparency:** The current working pipeline uses locally generated **synthetic Brazilian e-commerce data** with Olist-style CSV filenames and table structures. It is not the original Kaggle Olist dataset. This makes the project reproducible without downloading or redistributing customer records. All business findings should therefore be described as insights from the synthetic dataset, not from the real Brazilian e-commerce market.
@@ -237,7 +237,7 @@ The loader reads the processed CSV files and creates/replaces the project tables
 
 ---
 
-## 📊 Analysis delivered
+##  Analysis delivered
 
 | Analysis | What it measures |
 |---|---|
@@ -263,7 +263,7 @@ The loader reads the processed CSV files and creates/replaces the project tables
 
 ---
 
-## 📈 Power BI dashboard
+##  Power BI dashboard
 
 The Power BI report is being developed in Power BI Desktop. The repository provides a dashboard blueprint and DAX measure reference.
 
@@ -292,7 +292,7 @@ Use `powerbi/dashboard_blueprint.md` and `powerbi/measures.dax` as references.
 
 ---
 
-## 🔍 Data quality and modelling considerations
+##  Data quality and modelling considerations
 
 - Customer and seller city/state values are generated as valid paired locations; location validation should return zero mismatches for the generated source.
 - The order-item fact table contains multiple rows per order. Count orders using distinct `order_id`, not row count.
@@ -330,13 +330,11 @@ pip install pytest
 
 ---
 
-
-
 ---
 
-## 👩‍💻 Author
+##  Author
 
-**Fariha Taneem**  
+**Fariha Taneem**
 Computer Science & Engineering · Data Analytics · AI/ML · Cloud
 
 [GitHub](https://github.com/Fariha12t) · [Project Repository](https://github.com/Fariha12t/ecommerce-customer-revenue-intelligence)
