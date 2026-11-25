@@ -1,0 +1,39 @@
+{
+  "name": "E-Commerce Intelligence - Navy & Teal",
+  "dataColors": ["#16B8A6", "#4C8BF5", "#F4A261", "#8B5CF6", "#E76F51", "#2A9D8F", "#E9C46A", "#64748B"],
+  "background": "#F4F7FB",
+  "foreground": "#10243A",
+  "tableAccent": "#16B8A6",
+  "visualStyles": {
+    "*": {
+      "*": [
+        {
+          "title": [
+            { "show": true, "fontFace": "Segoe UI Semibold", "fontSize": 12, "color": { "solid": { "color": "#10243A" } } }
+          ],
+          "background": [
+            { "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }
+          ],
+          "border": [
+            { "show": true, "color": { "solid": { "color": "#E3EAF2" } }, "radius": 8 }
+          ]
+        }
+      ]
+    },
+    "card": {
+      "*": [
+        {
+          "labels": [
+            { "color": { "solid": { "color": "#64748B" } }, "fontSize": 10 }
+          ],
+          "categoryLabels": [
+            { "color": { "solid": { "color": "#64748B" } }, "fontSize": 10 }
+          ],
+          "calloutValue": [
+            { "fontFace": "Segoe UI Semibold", "fontSize": 28, "color": { "solid": { "color": "#10243A" } } }
+          ]
+        }
+      ]
+    }
+  }
+}
