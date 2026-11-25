@@ -1,47 +1,76 @@
--- Assumes a fact_order_items table related to customer, product and date dimensions.
-Gross Value = 
-CALCULATE(
-    SUMX(fact_order_items, fact_order_items[price] + fact_order_items[freight_value]),
-    fact_order_items[order_status] = "delivered"
+/*
+Enterprise E-Commerce Customer & Revenue Intelligence
+DAX reference measures.
+
+Model assumptions:
+- Main reporting fact: 'public fact_order_items'
+- One row per order item.
+- Columns include order_id, customer_unique_id, order_status,
+  price, freight_value, product_id, product_category_name,
+  customer_state, customer_city, seller_state, seller_city.
+- The measures below explicitly filter delivered orders.
+*/
+
+Total Revenue =
+CALCULATE (
+    SUMX (
+        'public fact_order_items',
+        'public fact_order_items'[price]
+            + 'public fact_order_items'[freight_value]
+    ),
+    'public fact_order_items'[order_status] = "delivered"
 )
 
-Delivered Orders =
-CALCULATE(
-    DISTINCTCOUNT(fact_order_items[order_id]),
-    fact_order_items[order_status] = "delivered"
+Total Orders =
+CALCULATE (
+    DISTINCTCOUNT ( 'public fact_order_items'[order_id] ),
+    'public fact_order_items'[order_status] = "delivered"
 )
 
-Average Order Value = DIVIDE([Gross Value], [Delivered Orders])
-
-Units Sold =
-CALCULATE(
-    COUNT(fact_order_items[order_item_id]),
-    fact_order_items[order_status] = "delivered"
+Total Customers =
+CALCULATE (
+    DISTINCTCOUNT ( 'public fact_order_items'[customer_unique_id] ),
+    'public fact_order_items'[order_status] = "delivered"
 )
 
-Unique Customers =
-CALCULATE(
-    DISTINCTCOUNT(fact_order_items[customer_unique_id]),
-    fact_order_items[order_status] = "delivered"
+Average Order Value =
+DIVIDE ( [Total Revenue], [Total Orders], 0 )
+
+Total Units Sold =
+CALCULATE (
+    COUNTROWS ( 'public fact_order_items' ),
+    'public fact_order_items'[order_status] = "delivered"
 )
 
 Repeat Customers =
-COUNTROWS(
-    FILTER(
-        VALUES(fact_order_items[customer_unique_id]),
-        CALCULATE(
-            DISTINCTCOUNT(fact_order_items[order_id]),
-            fact_order_items[order_status] = "delivered"
-        ) >= 2
+VAR CustomerOrderCounts =
+    ADDCOLUMNS (
+        CALCULATETABLE (
+            VALUES ( 'public fact_order_items'[customer_unique_id] ),
+            'public fact_order_items'[order_status] = "delivered"
+        ),
+        "__DeliveredOrders",
+            CALCULATE (
+                DISTINCTCOUNT ( 'public fact_order_items'[order_id] ),
+                'public fact_order_items'[order_status] = "delivered"
+            )
     )
-)
-
-Repeat Customer Rate = DIVIDE([Repeat Customers], [Unique Customers])
-
-Revenue MoM % =
-VAR PreviousMonth =
-    CALCULATE([Gross Value], DATEADD('Date'[Date], -1, MONTH))
 RETURN
-    DIVIDE([Gross Value] - PreviousMonth, PreviousMonth)
+    COUNTROWS (
+        FILTER ( CustomerOrderCounts, [__DeliveredOrders] >= 2 )
+    )
 
-Revenue YTD = TOTALYTD([Gross Value], 'Date'[Date])
+Repeat Customer Rate =
+DIVIDE ( [Repeat Customers], [Total Customers], 0 )
+
+Delivered Revenue per Customer =
+DIVIDE ( [Total Revenue], [Total Customers], 0 )
+
+/*
+Create this calculated column in a dedicated Date table if one exists:
+Year Month = FORMAT ( 'Date'[Date], "YYYY-MM" )
+
+For a quick monthly trend without a Date table, use the timestamp column
+from the fact table on the X-axis and set its date hierarchy appropriately.
+A proper Date dimension is recommended for time intelligence.
+*/

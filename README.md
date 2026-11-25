@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛍️ Enterprise E-Commerce Customer & Revenue Intelligence
+#  Enterprise E-Commerce Customer & Revenue Intelligence
 
 ### From raw transactions to customer, product, revenue and geographic intelligence.
 
@@ -18,7 +18,7 @@ A portfolio-grade analytics engineering project built with **Python · PostgreSQ
 
 ---
 
-## ✨ Project at a glance
+## Project at a glance
 
 This project demonstrates an end-to-end e-commerce analytics workflow: generating a reproducible dataset, validating and transforming records, loading analytical tables into PostgreSQL, exploring business performance, and preparing an interactive Power BI report.
 
@@ -34,7 +34,7 @@ The analysis focuses on six business areas:
 
 ---
 
-## 🧩 What the project answers
+##  What the project answers
 
 - Which product categories and products generate the most gross order-item value?
 - How do monthly revenue, delivered orders and average order value change over time?
@@ -45,7 +45,7 @@ The analysis focuses on six business areas:
 
 ---
 
-## 🏗️ Solution architecture
+## Solution architecture
 
 ```mermaid
 flowchart TD
@@ -72,7 +72,7 @@ flowchart TD
 
 ---
 
-## 🧰 Technology stack
+##  Technology stack
 
 | Area | Tools |
 |---|---|
@@ -86,7 +86,7 @@ flowchart TD
 
 ---
 
-## 📂 Repository structure
+##  Repository structure
 
 ```text
 ecommerce-customer-revenue-intelligence/
@@ -127,7 +127,7 @@ ecommerce-customer-revenue-intelligence/
 
 ---
 
-## 🚀 Run the project locally
+##  Run the project locally
 
 ### 1. Prerequisites
 
@@ -194,7 +194,7 @@ The analytics step exports business analysis results to `reports/generated/`, in
 
 ---
 
-## 🐘 PostgreSQL setup
+##  PostgreSQL setup
 
 PostgreSQL is used to query the processed tables and provide a data source for Power BI.
 
@@ -303,7 +303,7 @@ Use `powerbi/dashboard_blueprint.md` and `powerbi/measures.dax` as references.
 
 ---
 
-## ⚠️ Scope and limitations
+## Scope and limitations
 
 - The current data is **synthetic**, generated locally for portfolio demonstration and repeatable development.
 - Olist-style filenames are used for compatibility with the pipeline structure; this does not mean the current results were calculated from the original Kaggle Olist records.
@@ -314,7 +314,7 @@ Use `powerbi/dashboard_blueprint.md` and `powerbi/measures.dax` as references.
 
 ---
 
-## 🧪 Tests
+##  Tests
 
 Run the available tests from the repository root:
 
@@ -330,18 +330,7 @@ pip install pytest
 
 ---
 
-## 🗺️ Roadmap
 
-- [x] Reproducible synthetic data generation
-- [x] Python ETL and PostgreSQL loading
-- [x] SQL business analysis
-- [x] Exploratory analysis and revenue KPIs
-- [x] RFM customer segmentation
-- [x] Product and category performance
-- [x] Customer and seller geographic analysis
-- [ ] Finish and validate the Power BI executive dashboard
-- [ ] Add dashboard screenshots and final business recommendations
-- [ ] Expand automated data-quality and metric tests
 
 ---
 
