@@ -12,3 +12,15 @@ reports/generated/*
 powerbi/*.pbix
 powerbi/screenshots/*
 !powerbi/screenshots/.gitkeep
+
+# Append these lines to your existing .gitignore
+mlruns/
+mlartifacts/
+.pytest_cache/
+.ruff_cache/
+reports/generated/ml/customer_scores.csv
+# keep the small, shareable results:
+!reports/generated/ml/metrics.json
+!reports/generated/ml/shap_summary.png
+!reports/generated/key_findings.md
+reports/generated/ml_late/order_risk_scores.csv
