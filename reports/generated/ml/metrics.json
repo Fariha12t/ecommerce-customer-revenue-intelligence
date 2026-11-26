@@ -1,0 +1,21 @@
+{
+  "horizon_days": 180,
+  "n_customers": 62056,
+  "n_train": 46542,
+  "n_test": 15514,
+  "test_period_start": "2018-02-08",
+  "xgboost": {
+    "roc_auc": 0.5431157339871918,
+    "pr_auc": 0.01536378875375027,
+    "top_decile_repeat_rate": 0.018052869116698903,
+    "base_repeat_rate": 0.013020497615057367,
+    "top_decile_lift": 1.3864960964181525
+  },
+  "logistic_baseline": {
+    "roc_auc": 0.5827229274651603,
+    "pr_auc": 0.01821458235550396,
+    "top_decile_repeat_rate": 0.017408123791102514,
+    "base_repeat_rate": 0.013020497615057367,
+    "top_decile_lift": 1.3369783786889329
+  }
+}

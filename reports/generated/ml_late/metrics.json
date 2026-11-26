@@ -1,0 +1,22 @@
+{
+  "n_orders": 96470,
+  "n_train": 72352,
+  "n_test": 24118,
+  "test_period_start": "2018-05-05",
+  "xgboost": {
+    "roc_auc": 0.734029599677184,
+    "pr_auc": 0.13595826652087414,
+    "base_late_rate": 0.06306493075711087,
+    "top_decile_late_rate": 0.16009954375777685,
+    "top_decile_lift": 2.538646151446458,
+    "late_orders_captured_in_top_20pct": 0.4700854700854701
+  },
+  "logistic_baseline": {
+    "roc_auc": 0.7108785189844283,
+    "pr_auc": 0.12337617292634898,
+    "base_late_rate": 0.06306493075711087,
+    "top_decile_late_rate": 0.13148071339693074,
+    "top_decile_lift": 2.084846709866651,
+    "late_orders_captured_in_top_20pct": 0.36752136752136755
+  }
+}
