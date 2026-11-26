@@ -1,8 +1,7 @@
 """Clean Olist source files and create analytics-ready CSV tables."""
-from pathlib import Path
 import pandas as pd
-import numpy as np
-from src.config import RAW_DIR, PROCESSED_DIR, FILES
+
+from src.config import FILES, PROCESSED_DIR, RAW_DIR
 
 DATE_COLUMNS = {
     "orders": ["order_purchase_timestamp", "order_approved_at",

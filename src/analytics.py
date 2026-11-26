@@ -1,7 +1,9 @@
 """Generate reproducible business KPIs, RFM segments and cohort retention."""
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from src.config import PROCESSED_DIR, REPORT_DIR
+
 
 def run_analytics():
     orders = pd.read_csv(PROCESSED_DIR / "orders.csv", parse_dates=["order_purchase_timestamp"])

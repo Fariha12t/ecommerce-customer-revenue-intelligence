@@ -1,8 +1,8 @@
 
 """Load processed CSV files into PostgreSQL."""
 import os
-import pandas as pd
 
+import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
@@ -47,7 +47,7 @@ def main():
 
     try:
         # Verify database connectivity first.
-        with engine.connect() as connection:
+        with engine.connect():
             print("PostgreSQL connection successful!")
 
         for csv_name, table_name in tables.items():
