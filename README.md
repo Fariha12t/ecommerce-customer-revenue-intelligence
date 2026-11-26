@@ -12,7 +12,7 @@ A portfolio-grade analytics engineering project built with **Python · PostgreSQ
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Analytics-4169E1?logo=postgresql&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?logo=powerbi&logoColor=black)
 ![Pandas](https://img.shields.io/badge/Pandas-Data%20Wrangling-150458?logo=pandas&logoColor=white)
-![Status](https://img.shields.io/badge/Status-In%20Progress-orange)
+
 
 </div>
 
