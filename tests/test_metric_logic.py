@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def test_revenue_includes_freight():
     df = pd.DataFrame({"price": [10.0, 20.0], "freight_value": [2.0, 3.0]})
     assert (df.price + df.freight_value).sum() == 35.0
