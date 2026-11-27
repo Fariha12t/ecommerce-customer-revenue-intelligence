@@ -24,3 +24,4 @@ reports/generated/ml/customer_scores.csv
 !reports/generated/ml/shap_summary.png
 !reports/generated/key_findings.md
 reports/generated/ml_late/order_risk_scores.csv
+powerbi/**/.pbi/

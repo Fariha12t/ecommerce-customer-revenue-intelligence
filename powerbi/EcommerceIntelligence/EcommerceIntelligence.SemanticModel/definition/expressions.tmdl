@@ -1,0 +1,1 @@
+expression DataFolder = "D:\Downloads D-Drive\ecommerce-customer-revenue-intelligence\ecommerce-customer-revenue-intelligence\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]

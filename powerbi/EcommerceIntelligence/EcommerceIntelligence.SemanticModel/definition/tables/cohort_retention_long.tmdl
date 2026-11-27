@@ -1,0 +1,31 @@
+table cohort_retention_long
+
+	column cohort_month
+		dataType: string
+		summarizeBy: none
+		sourceColumn: cohort_month
+
+	column period
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: period
+
+	column retention
+		dataType: double
+		summarizeBy: none
+		sourceColumn: retention
+
+	measure 'Avg Retention' = AVERAGE(cohort_retention_long[retention])
+		formatString: 0.0%
+
+	partition cohort_retention_long = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(DataFolder & "reports\generated\cohort_retention_long.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.None]),
+					Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					Selected = Table.SelectColumns(Promoted, {"cohort_month", "period", "retention"}),
+					Typed = Table.TransformColumnTypes(Selected, {{"cohort_month", type text}, {"period", Int64.Type}, {"retention", type number}}, "en-US")
+				in
+					Typed

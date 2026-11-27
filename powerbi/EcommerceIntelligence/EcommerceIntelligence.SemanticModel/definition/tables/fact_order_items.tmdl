@@ -1,0 +1,62 @@
+table fact_order_items
+
+	column order_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: order_id
+
+	column product_category_name_english
+		dataType: string
+		summarizeBy: none
+		sourceColumn: product_category_name_english
+
+	column price
+		dataType: double
+		summarizeBy: none
+		sourceColumn: price
+
+	column freight_value
+		dataType: double
+		summarizeBy: none
+		sourceColumn: freight_value
+
+	column order_status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: order_status
+
+	column customer_state
+		dataType: string
+		summarizeBy: none
+		sourceColumn: customer_state
+
+	column seller_state
+		dataType: string
+		summarizeBy: none
+		sourceColumn: seller_state
+
+	measure 'Category Revenue' = CALCULATE(SUMX(fact_order_items,fact_order_items[price]+fact_order_items[freight_value]),fact_order_items[order_status]="delivered")
+		formatString: #,0
+
+	measure 'Items Sold' = CALCULATE(COUNTROWS(fact_order_items),fact_order_items[order_status]="delivered")
+		formatString: #,0
+
+	measure 'Freight Share' = DIVIDE(CALCULATE(SUM(fact_order_items[freight_value]),fact_order_items[order_status]="delivered"),[Category Revenue])
+		formatString: 0.0%
+
+	measure 'Category Rank' = RANKX(ALL(fact_order_items[product_category_name_english]),[Category Revenue],,DESC,Dense)
+		formatString: 0
+
+	measure 'Top 10 Category Revenue' = IF([Category Rank]<=10,[Category Revenue])
+		formatString: #,0
+
+	partition fact_order_items = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(DataFolder & "data\processed\fact_order_items.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.None]),
+					Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					Selected = Table.SelectColumns(Promoted, {"order_id", "product_category_name_english", "price", "freight_value", "order_status", "customer_state", "seller_state"}),
+					Typed = Table.TransformColumnTypes(Selected, {{"order_id", type text}, {"product_category_name_english", type text}, {"price", type number}, {"freight_value", type number}, {"order_status", type text}, {"customer_state", type text}, {"seller_state", type text}}, "en-US")
+				in
+					Typed
