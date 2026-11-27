@@ -108,7 +108,7 @@ longest delivery times and the highest late rates.
 Cohort matrix of repeat ordering by months since first purchase. Returning to buy is rare in every cohort
 (typically well under 1% in any given month).
 
-![Retention](powerbi/screenshots/05_retention.png)
+![Retention](powerbi/screenshots/05_rentention.png)
 
 ### 6. Delivery Risk (ML)
 Out-of-sample results of the late-delivery model: orders in the high-risk band are late 15.6% of the time
