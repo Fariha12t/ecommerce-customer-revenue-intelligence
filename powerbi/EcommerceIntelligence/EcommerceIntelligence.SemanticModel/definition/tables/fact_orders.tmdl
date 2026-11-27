@@ -1,0 +1,155 @@
+table fact_orders
+
+	column order_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: order_id
+
+	column customer_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: customer_id
+
+	column order_status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: order_status
+
+	column order_purchase_timestamp
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: order_purchase_timestamp
+
+	column order_approved_at
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: order_approved_at
+
+	column order_delivered_carrier_date
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: order_delivered_carrier_date
+
+	column order_delivered_customer_date
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: order_delivered_customer_date
+
+	column order_estimated_delivery_date
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: order_estimated_delivery_date
+
+	column item_revenue
+		dataType: double
+		summarizeBy: none
+		sourceColumn: item_revenue
+
+	column freight_revenue
+		dataType: double
+		summarizeBy: none
+		sourceColumn: freight_revenue
+
+	column item_count
+		dataType: double
+		summarizeBy: none
+		sourceColumn: item_count
+
+	column gross_item_value
+		dataType: double
+		summarizeBy: none
+		sourceColumn: gross_item_value
+
+	column payment_value
+		dataType: double
+		summarizeBy: none
+		sourceColumn: payment_value
+
+	column payment_count
+		dataType: double
+		summarizeBy: none
+		sourceColumn: payment_count
+
+	column customer_unique_id
+		dataType: string
+		summarizeBy: none
+		sourceColumn: customer_unique_id
+
+	column customer_city
+		dataType: string
+		summarizeBy: none
+		sourceColumn: customer_city
+
+	column customer_state
+		dataType: string
+		summarizeBy: none
+		sourceColumn: customer_state
+
+	column 'Order Date' = DATE(YEAR(fact_orders[order_purchase_timestamp]),MONTH(fact_orders[order_purchase_timestamp]),DAY(fact_orders[order_purchase_timestamp]))
+		dataType: dateTime
+		formatString: Long Date
+		summarizeBy: none
+
+	measure 'Total Revenue' = CALCULATE(SUM(fact_orders[gross_item_value]),fact_orders[order_status]="delivered")
+		formatString: #,0
+
+	measure 'Total Orders' = CALCULATE(DISTINCTCOUNT(fact_orders[order_id]),fact_orders[order_status]="delivered")
+		formatString: #,0
+
+	measure 'Total Customers' = CALCULATE(DISTINCTCOUNT(fact_orders[customer_unique_id]),fact_orders[order_status]="delivered")
+		formatString: #,0
+
+	measure 'Average Order Value' = DIVIDE([Total Revenue],[Total Orders])
+		formatString: #,0.00
+
+	measure 'Revenue Prior Month' = CALCULATE([Total Revenue],DATEADD('Date'[Date],-1,MONTH))
+		formatString: #,0
+
+	measure 'Revenue MoM %' = DIVIDE([Total Revenue]-[Revenue Prior Month],[Revenue Prior Month])
+		formatString: 0.0%
+
+	measure 'Repeat Customers' = COUNTROWS(FILTER(customer_rfm,customer_rfm[frequency]>=2))
+		formatString: #,0
+
+	measure 'Repeat Customer Rate' = DIVIDE([Repeat Customers],COUNTROWS(customer_rfm))
+		formatString: 0.0%
+
+	measure 'Top 20% Customer Value Share' = VAR n=ROUNDUP(COUNTROWS(customer_rfm)*0.2,0) VAR topValue=SUMX(TOPN(n,customer_rfm,customer_rfm[monetary],DESC),customer_rfm[monetary]) RETURN DIVIDE(topValue,SUM(customer_rfm[monetary]))
+		formatString: 0.0%
+
+	measure 'Late Delivery Rate' = VAR d=FILTER(fact_orders,NOT ISBLANK(fact_orders[order_delivered_customer_date])) VAR l=FILTER(d,fact_orders[order_delivered_customer_date]>fact_orders[order_estimated_delivery_date]) RETURN DIVIDE(COUNTROWS(l),COUNTROWS(d))
+		formatString: 0.0%
+
+	measure 'Avg Delivery Days' = AVERAGEX(FILTER(fact_orders,NOT ISBLANK(fact_orders[order_delivered_customer_date])),DATEDIFF(fact_orders[order_purchase_timestamp],fact_orders[order_delivered_customer_date],DAY))
+		formatString: 0.0
+
+	measure 'Actual Late Rate' = CALCULATE(AVERAGE(order_risk_scores[is_late]),order_risk_scores[split]="test")
+		formatString: 0.0%
+
+	measure 'Predicted Late Rate' = CALCULATE(AVERAGE(order_risk_scores[late_probability]),order_risk_scores[split]="test")
+		formatString: 0.0%
+
+	measure 'Scored Orders' = CALCULATE(COUNTROWS(order_risk_scores),order_risk_scores[split]="test")
+		formatString: #,0
+
+	measure 'High Risk Late Rate' = CALCULATE([Actual Late Rate],order_risk_scores[risk_band]="High")
+		formatString: 0.0%
+
+	measure 'High Risk Lift' = DIVIDE([High Risk Late Rate],[Actual Late Rate])
+		formatString: 0.0"x"
+
+	partition fact_orders = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(DataFolder & "data\processed\fact_orders.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.None]),
+					Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+					Selected = Table.SelectColumns(Promoted, {"order_id", "customer_id", "order_status", "order_purchase_timestamp", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date", "item_revenue", "freight_revenue", "item_count", "gross_item_value", "payment_value", "payment_count", "customer_unique_id", "customer_city", "customer_state"}),
+					Typed = Table.TransformColumnTypes(Selected, {{"order_id", type text}, {"customer_id", type text}, {"order_status", type text}, {"order_purchase_timestamp", type datetime}, {"order_approved_at", type datetime}, {"order_delivered_carrier_date", type datetime}, {"order_delivered_customer_date", type datetime}, {"order_estimated_delivery_date", type datetime}, {"item_revenue", type number}, {"freight_revenue", type number}, {"item_count", type number}, {"gross_item_value", type number}, {"payment_value", type number}, {"payment_count", type number}, {"customer_unique_id", type text}, {"customer_city", type text}, {"customer_state", type text}}, "en-US")
+				in
+					Typed
