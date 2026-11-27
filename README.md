@@ -1,47 +1,54 @@
 <div align="center">
 
-#  Enterprise E-Commerce Customer & Revenue Intelligence
+# Enterprise E-Commerce Customer & Revenue Intelligence
 
-### From raw transactions to customer, product, revenue and geographic intelligence.
+### From raw transactions to customer, product, revenue and delivery-risk intelligence.
 
-A portfolio-grade analytics engineering project built with **Python · PostgreSQL · SQL · Power BI · DAX · Plotly**.
+End-to-end analytics and machine-learning project on **96K real e-commerce orders**, built with
+**Python · SQL · PostgreSQL · XGBoost · SHAP · Power BI · DAX**.
 
 <br/>
 
+[![CI](https://github.com/Fariha12t/ecommerce-customer-revenue-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/Fariha12t/ecommerce-customer-revenue-intelligence/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Analytics-4169E1?logo=postgresql&logoColor=white)
-![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?logo=powerbi&logoColor=black)
-![Pandas](https://img.shields.io/badge/Pandas-Data%20Wrangling-150458?logo=pandas&logoColor=white)
-
+![Power BI](https://img.shields.io/badge/Power%20BI-6--page%20report-F2C811?logo=powerbi&logoColor=black)
+![XGBoost](https://img.shields.io/badge/ML-XGBoost%20%2B%20SHAP-orange)
 
 </div>
 
----
-
-## Project at a glance
-
-This project demonstrates an end-to-end e-commerce analytics workflow: generating a reproducible dataset, validating and transforming records, loading analytical tables into PostgreSQL, exploring business performance, and preparing an interactive Power BI report.
-
-The analysis focuses on six business areas:
-
-|  Revenue performance |  Product performance |  Customer intelligence |
-|:---|:---|:---|
-| Monthly revenue, orders and AOV | Category contribution and top products | RFM scoring and repeat purchasing |
-|  Geographic performance |  Retention analysis |  Executive reporting |
-| State and city comparisons | Cohort-based customer activity | KPI measures and dashboard design |
-
-> **Dataset transparency:** The current working pipeline uses locally generated **synthetic Brazilian e-commerce data** with Olist-style CSV filenames and table structures. It is not the original Kaggle Olist dataset. This makes the project reproducible without downloading or redistributing customer records. All business findings should therefore be described as insights from the synthetic dataset, not from the real Brazilian e-commerce market.
+![Executive overview dashboard](powerbi/screenshots/01_executive_overview.png)
 
 ---
 
-##  What the project answers
+## Key results
 
-- Which product categories and products generate the most gross order-item value?
-- How do monthly revenue, delivered orders and average order value change over time?
-- Which customers purchase repeatedly, and how are customers distributed across RFM segments?
-- Which customer states and cities contribute the most to delivered order-item value?
-- How does customer activity vary by first-purchase cohort?
-- Which customers have the highest historical monetary value?
+Dataset: the public [Olist Brazilian E-Commerce dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+(96,478 delivered orders, September 2016 to August 2018). Values are in Brazilian reais (R$).
+
+| Metric | Result |
+|---|---|
+| Gross order-item value (delivered) | **R$15.4M** |
+| Delivered orders / unique customers | **96,478 / 93,358** |
+| Average order value | **R$159.83** |
+| Repeat-customer rate | **3.0%** (only 3 in 100 customers order twice) |
+| Top 20% of customers' share of value | **53.5%** |
+| Review score, late vs on-time delivery | **2.57 vs 4.29** |
+| Late-delivery model (XGBoost, time-based test set) | **ROC-AUC 0.73** · riskiest 20% of orders contain **47%** of late deliveries (**2.5x** lift) |
+
+Full auto-generated findings: [`reports/generated/key_findings.md`](reports/generated/key_findings.md)
+
+---
+
+## What the project answers
+
+- Which categories and states generate the most value, and how does revenue move month to month?
+- How are customers distributed across RFM segments, and how concentrated is customer value?
+- How many customers come back, and how does retention differ by first-purchase cohort?
+- Where is delivery slow, and how much does lateness hurt customer satisfaction?
+- **Can late deliveries be predicted at checkout, early enough to act?**
 
 ---
 
@@ -49,295 +56,273 @@ The analysis focuses on six business areas:
 
 ```mermaid
 flowchart TD
-    A[Reproducible synthetic data generator] --> B[Raw CSV files]
-    B --> C[Python ETL and data-quality checks]
-    C --> D[Processed analytical tables]
-    D --> E[(PostgreSQL)]
-    D --> F[Jupyter Notebook]
-    E --> G[SQL analysis]
-    E --> H[Power BI data model]
-    F --> I[EDA, RFM, cohort and geographic analysis]
-    G --> J[Business-ready outputs]
+    A[Olist raw CSVs] --> B[Python ETL and data-quality checks]
+    B --> C[Processed analytical tables]
+    C --> D[(PostgreSQL)]
+    C --> E[Jupyter EDA]
+    A --> F[Key-findings generator]
+    A --> G[Leakage-safe feature tables]
+    G --> H[XGBoost + SHAP models]
+    H --> I[Risk scores per order and customer]
+    C --> J[Power BI semantic model]
     I --> J
-    H --> K[Executive dashboard]
+    J --> K[6-page Power BI report]
 ```
 
-### Analytics workflow
-
-1. **Generate** — create consistent synthetic customers, orders, items, products, sellers, payments and reviews.
-2. **Transform** — clean source tables, standardise fields, validate locations and construct order-level and order-item-level analytical tables.
-3. **Store** — load the processed tables into PostgreSQL.
-4. **Analyse** — use SQL and Python to calculate KPIs, monthly trends, product/category performance, RFM segments, cohorts and geographic performance.
-5. **Communicate** — build an executive Power BI report with DAX measures and interactive visuals.
+**Workflow:** download → clean and transform (ETL) → load to PostgreSQL → analyse in SQL and Python →
+train and explain models → publish a Power BI report with DAX measures.
 
 ---
 
-##  Technology stack
+## Dashboard (Power BI, 6 pages)
 
-| Area | Tools |
-|---|---|
-| Programming | Python |
-| Data manipulation | Pandas, NumPy |
-| Database | PostgreSQL |
-| Querying | SQL |
-| Exploration and visualisation | Jupyter Notebook, Plotly |
-| Business intelligence | Power BI Desktop, DAX |
-| Environment | VS Code, Python virtual environment, Git |
+The report is stored as a Power BI Project in [`powerbi/EcommerceIntelligence/`](powerbi/EcommerceIntelligence/)
+(open `EcommerceIntelligence.pbip`, then Refresh). Every visual has alt text and a defined tab order.
+
+### 1. Executive Overview
+KPI cards, monthly revenue trend, revenue by state, and month-over-month change. Revenue peaks in
+November 2017 and then stabilises around R$1M a month.
+
+![Executive Overview](powerbi/screenshots/01_executive_overview.png)
+
+### 2. Product Performance
+Top 10 categories by revenue and a detail table. `health_beauty`, `watches_gifts` and `bed_bath_table`
+lead; freight is 14.3% of order value.
+
+![Product Performance](powerbi/screenshots/02_product_performance.png)
+
+### 3. Customer Intelligence
+RFM segments, value concentration and repeat behaviour. The top 20% of customers drive 53.5% of value.
+The decile chart shows actual repeat rate by model score, and includes customers the model was trained on,
+so it overstates the signal (held-out ROC-AUC is 0.54, see below).
+
+![Customer Intelligence](powerbi/screenshots/03_customer_intelligence.png)
+
+### 4. Geographic Performance
+Revenue is concentrated in São Paulo (37% of value). Remote northern and north-eastern states have the
+longest delivery times and the highest late rates.
+
+![Geographic Performance](powerbi/screenshots/04_geographic_performance.png)
+
+### 5. Retention
+Cohort matrix of repeat ordering by months since first purchase. Returning to buy is rare in every cohort
+(typically well under 1% in any given month).
+
+![Retention](powerbi/screenshots/05_retention.png)
+
+### 6. Delivery Risk (ML)
+Out-of-sample results of the late-delivery model: orders in the high-risk band are late 15.6% of the time
+against 6.3% overall.
+
+![Delivery Risk](powerbi/screenshots/06_delivery_risk.png)
 
 ---
 
-##  Repository structure
+## Predictive layer
+
+### Late-delivery risk model (main model)
+
+**Question:** at checkout, which orders are likely to arrive after the promised date?
+Late delivery is the strongest driver of bad reviews (2.57 vs 4.29 average score), so catching it early is actionable:
+re-promise the date, choose a faster carrier, or prioritise the order.
+
+- **Prediction point:** purchase time. Features: basket value, weight and size, seller-to-customer distance
+  (haversine on ZIP-prefix coordinates), same-state flag, promised delivery window, payment choice, calendar,
+  category and state. Delivery timestamps and reviews are never used.
+- **Evaluation:** time-based split (test set from 2018-05-05 onward, 24,118 orders), XGBoost compared with a
+  logistic-regression baseline, explained with SHAP.
+- **Output:** `reports/generated/ml_late/order_risk_scores.csv` (probability and High/Medium/Low band per order) feeds the Power BI risk page.
+
+| Model | ROC-AUC | PR-AUC (base rate 6.3%) | Late rate, top 10% | Late orders caught in top 20% |
+|---|---|---|---|---|
+| Logistic regression | 0.711 | 0.123 | 13.1% | 36.8% |
+| **XGBoost** | **0.734** | **0.136** | **16.0% (2.5x lift)** | **47.0%** |
+
+**What drives lateness (SHAP):** purchase month (peak-season congestion), length of the promised delivery
+window, seller-to-customer distance, São Paulo as customer state, and freight value.
+
+![Late-delivery SHAP summary](reports/generated/ml_late/shap_summary.png)
+
+**Reading the result honestly:** the model ranks orders well but its probabilities are not perfectly calibrated
+(see the predicted-vs-actual chart), so use it to prioritise orders, not to quote exact probabilities.
+With roughly 1,500 late orders in the test set, state-level late rates for small states are noisy.
+
+```bash
+python -m src.ml.late_delivery --no-mlflow
+```
+
+### Repeat-purchase model (exploratory, weak signal)
+
+**Question:** which first-time customers will buy again within 180 days?
+
+| Model | ROC-AUC | PR-AUC (base rate 1.3%) | Top-decile lift |
+|---|---|---|---|
+| Logistic regression | 0.583 | 0.018 | 1.34x |
+| XGBoost | 0.543 | 0.015 | 1.39x |
+
+Only ~1.3% of customers reorder inside the window, and first-order features carry little signal. With roughly 200
+positive cases in the test set, the difference between the two models is not meaningful. This is a finding in
+itself: **repeat behaviour cannot be predicted from first-order data, so retention levers have to come from the
+post-purchase experience** (delivery quality, follow-up offers), not from targeting by first-order profile.
+
+```bash
+python -m src.ml.train --no-mlflow
+```
+
+Both models use leakage controls: features are known at the prediction point, splits are chronological,
+and right-censored customers are removed. Optional experiment tracking: drop `--no-mlflow` and run `mlflow ui`.
+
+---
+
+## Business findings and recommended actions
+
+| # | Finding | Evidence | Suggested action |
+|---|---|---|---|
+| 1 | Very few customers return | 3.0% placed 2+ delivered orders | Focus on the second purchase: post-delivery offers, review-triggered coupons |
+| 2 | Value is concentrated | Top 20% of customers = 53.5% of value | Protect and grow the high-value RFM segments |
+| 3 | Revenue is spread across many categories | Top 5 = health_beauty 9.2%, watches_gifts 8.2%, bed_bath_table 7.9%, sports_leisure 7.3%, computers_accessories 6.7% | Prioritise inventory and marketing on the leaders without over-concentrating |
+| 4 | Geography is concentrated | SP 37.4%, RJ 13.3%, MG 11.8% of value | Expand logistics and seller supply in under-served states |
+| 5 | Freight is a large share of value | 14.3% of gross order-item value | Test free-shipping thresholds and regional fulfilment |
+| 6 | Late delivery hurts satisfaction | 8.0% of orders late; reviews 2.57 (late) vs 4.29 (on time) | Use the risk model to re-promise dates or expedite flagged orders |
+| 7 | Strong seasonality and growth | Peak November 2017 (R$1.15M); Jan-Aug 2018 up 143% vs the same months of 2017 | Plan capacity and delivery promises around peak periods |
+
+---
+
+## Repository structure
 
 ```text
 ecommerce-customer-revenue-intelligence/
-│
-├── data/
-│   ├── raw/                       # Generated source CSVs (not committed)
-│   └── processed/                 # Clean analytical CSVs (not committed)
-│
-├── notebooks/
-│   └── exploratory_analysis.ipynb # EDA, customer, product and geo analysis
-│
+├── .github/workflows/ci.yml        # lint + tests on every push
+├── data/                           # raw/ and processed/ CSVs (not committed)
+├── notebooks/exploratory_analysis.ipynb
 ├── powerbi/
-│   ├── dashboard_blueprint.md     # Report layout and modelling guidance
-│   ├── measures.dax               # Reusable DAX measure definitions
-│   └── screenshots/               # Dashboard screenshots (add when ready)
-│
+│   ├── EcommerceIntelligence/      # Power BI Project: semantic model + 6-page report
+│   ├── screenshots/                # dashboard screenshots used in this README
+│   ├── dashboard_blueprint.md
+│   └── measures.dax
 ├── reports/
 │   ├── business_insights_template.md
-│   └── generated/                 # Exported analysis results (not committed)
-│
-├── sql/
-│   ├── schema.sql
-│   └── analysis_queries.sql
-│
+│   └── generated/                  # key_findings.md, ml/ and ml_late/ metrics and SHAP plots
+├── scripts/
+│   ├── download_olist.py           # real data download (Kaggle)
+│   ├── make_cohort_long.py         # cohort table in long format for Power BI
+│   └── make_linux_requirements.py  # Linux-safe requirements for Docker/CI
+├── sql/                            # schema.sql, analysis_queries.sql, final_validation.sql
 ├── src/
-│   ├── generate_data.py           # Synthetic data generation
-│   ├── config.py                  # Project paths and source-file mapping
-│   ├── etl.py                     # Cleaning and analytical table creation
-│   ├── analytics.py               # KPI, RFM and cohort analysis
-│   └── load_postgres.py            # PostgreSQL loader
-│
-├── tests/
-├── .env.example
-├── .gitignore
-├── requirements.txt
-└── README.md
+│   ├── etl.py, analytics.py, config.py, load_postgres.py, generate_data.py
+│   ├── insights.py                 # auto-generated business findings
+│   └── ml/                         # features.py, train.py, late_delivery.py
+├── tests/                          # unit tests (metrics, features, models, insights)
+├── Dockerfile, docker-compose.yml, Makefile, ruff.toml, LICENSE
+└── requirements*.txt
 ```
 
 ---
 
-##  Run the project locally
-
-### 1. Prerequisites
-
-- Python 3.10 or newer
-- PostgreSQL (optional, for database analysis)
-- Git
-- Power BI Desktop (optional, for the dashboard)
-
-### 2. Clone the repository
+## Quick start
 
 ```bash
 git clone https://github.com/Fariha12t/ecommerce-customer-revenue-intelligence.git
 cd ecommerce-customer-revenue-intelligence
-```
-
-### 3. Create and activate a virtual environment
-
-**Windows PowerShell**
-
-```powershell
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+.venv\Scripts\Activate.ps1                 # macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt -r requirements-ml.txt -r requirements-dev.txt
 ```
 
-**macOS / Linux**
+**Get the real data** (free Kaggle token required, see `scripts/download_olist.py`):
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+python scripts/download_olist.py
 ```
 
-### 4. Install dependencies
+**Run the pipeline:**
 
 ```bash
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+python -m src.etl                          # clean data, build analytical tables
+python -m src.analytics                    # KPIs, RFM, cohorts
+python scripts/make_cohort_long.py         # cohort table for Power BI
+python -m src.insights                     # reports/generated/key_findings.md
+python -m src.ml.train --no-mlflow         # repeat-purchase model
+python -m src.ml.late_delivery --no-mlflow # late-delivery model
+python -m pytest -q                        # tests
 ```
 
-### 5. Generate the synthetic source data
+**Open the dashboard:** open `powerbi/EcommerceIntelligence/EcommerceIntelligence.pbip` in Power BI Desktop,
+set the `DataFolder` parameter to your local repository path (Home → Transform data → Manage parameters),
+and click Refresh.
 
-Run this from the repository root:
+### Docker (optional)
 
 ```bash
-python -m src.generate_data
+python scripts/make_linux_requirements.py  # drops Windows-only packages
+docker compose up --build                  # PostgreSQL + full pipeline
 ```
-
-The generator creates the source CSV files in `data/raw/`. The generated data is reproducible with a fixed random seed.
-
-### 6. Run the ETL pipeline
-
-```bash
-python -m src.etl
-```
-
-The ETL step validates and cleans the source data, then writes processed tables to `data/processed/`.
-
-### 7. Generate analytical outputs
-
-```bash
-python -m src.analytics
-```
-
-The analytics step exports business analysis results to `reports/generated/`, including executive KPIs, monthly performance, category performance, geographic performance, RFM/customer analysis and cohort outputs supported by the pipeline.
 
 ---
 
-##  PostgreSQL setup
+## PostgreSQL setup (optional)
 
-PostgreSQL is used to query the processed tables and provide a data source for Power BI.
+PostgreSQL provides a queryable copy of the processed tables.
 
-### 1. Create a database
-
-For example, create a database named:
-
-```sql
-CREATE DATABASE ecommerce_intelligence;
-```
-
-### 2. Configure environment variables
-
-Copy `.env.example` to `.env` and update it with your local PostgreSQL connection details.
-
-```dotenv
-PGHOST=127.0.0.1
-PGPORT=5432
-PGDATABASE=ecommerce_intelligence
-PGUSER=postgres
-PGPASSWORD=replace_with_your_local_password
-```
-
-Keep `.env` private. Never commit passwords, tokens or connection secrets.
-
-### 3. Run ETL before loading
-
-```bash
-python -m src.generate_data
-python -m src.etl
-```
-
-### 4. Load the processed tables
-
-```bash
-python -m src.load_postgres
-```
-
-The loader reads the processed CSV files and creates/replaces the project tables in the configured database. Review the loader before rerunning it against a database containing data you need to preserve.
+1. Create a database: `CREATE DATABASE ecommerce_intelligence;`
+2. Copy `.env.example` to `.env` and fill in your local connection details. Never commit `.env`.
+3. Load the tables: `python -m src.load_postgres` (it creates or replaces the project tables, so review it before running against a database you need to keep).
 
 ---
 
-##  Analysis delivered
-
-| Analysis | What it measures |
-|---|---|
-| Executive KPIs | Delivered gross order-item value, delivered orders, unique customers and AOV |
-| Monthly performance | Revenue, delivered orders, units and month-over-month revenue movement |
-| Product/category | Revenue contribution, order counts and units by category/product |
-| Customer RFM | Recency, frequency, monetary value and customer segments |
-| Repeat purchasing | Customers with at least two delivered orders |
-| Cohort activity | Customer activity by first delivered-order month |
-| Geographic performance | Revenue, orders and customers by customer state/city; seller-side analysis where available |
-
-### Key metric definitions
+## Metric definitions
 
 | Metric | Definition |
 |---|---|
-| **Gross order-item value** | Sum of item price plus freight value for delivered order items. This is not audited accounting revenue. |
+| **Gross order-item value** | Sum of item price plus freight for delivered order items. Not audited accounting revenue. |
 | **Delivered orders** | Distinct orders whose status is `delivered`. |
-| **Average order value (AOV)** | Delivered gross order-item value divided by distinct delivered orders. |
+| **Average order value** | Gross order-item value divided by distinct delivered orders. |
 | **Repeat customer** | A customer with at least two delivered orders. |
-| **RFM** | Recency, frequency and monetary scoring based on delivered-order activity. |
-| **Cohort** | Month of a customer's first delivered order; subsequent activity is measured by period. |
-| **Historical customer value** | Observed historical monetary value, not a predictive customer lifetime value model. |
+| **RFM** | Recency, frequency and monetary scoring on delivered-order activity. |
+| **Cohort** | Month of a customer's first delivered order; later activity is measured by period. |
+| **Late delivery** | Delivered after the estimated delivery date. |
+| **Risk band** | High / Medium / Low from the model's late probability (top 10% / next 20% / rest). |
 
 ---
 
-##  Power BI dashboard
+## Data quality and modelling notes
 
-The Power BI report is being developed in Power BI Desktop. The repository provides a dashboard blueprint and DAX measure reference.
-
-### Planned report pages
-
-| Page | Planned content |
-|---|---|
-| **Executive Overview** | Revenue, orders, customers, AOV, monthly revenue trend |
-| **Product Performance** | Category contribution, top products, units sold |
-| **Customer Intelligence** | RFM segments, repeat customer rate, customer value |
-| **Geographic Performance** | State and city revenue comparisons, seller geography |
-| **Retention Analysis** | Cohort activity and customer retention patterns |
-
-### Connect Power BI to PostgreSQL
-
-1. Open Power BI Desktop.
-2. Select **Get data → PostgreSQL database**.
-3. Enter the server as `127.0.0.1:5432`.
-4. Enter the database as `ecommerce_intelligence`.
-5. Choose the appropriate authentication method and connect.
-6. Select the required tables and review relationships before building visuals.
-
-Use `powerbi/dashboard_blueprint.md` and `powerbi/measures.dax` as references.
-
-> **Dashboard status:** The `.pbix` report is a manual Power BI Desktop deliverable. It should only be described as completed after the report visuals, measures, filters and model have been validated and the `.pbix` has been saved. Add genuine report screenshots to `powerbi/screenshots/` when available.
-
----
-
-##  Data quality and modelling considerations
-
-- Customer and seller city/state values are generated as valid paired locations; location validation should return zero mismatches for the generated source.
-- The order-item fact table contains multiple rows per order. Count orders using distinct `order_id`, not row count.
-- Payments and reviews are order-grain tables, while order items are item-grain. Avoid joining multiple one-to-many tables directly without pre-aggregation, as this can multiply monetary values.
-- Revenue measures should use delivered orders when reporting delivered sales.
-- Missing product categories are represented as `Unknown` where applicable.
-- Raw and processed CSVs, generated reports, local database credentials and Power BI `.pbix` files are excluded from Git where configured in `.gitignore`.
+- The order-item table has several rows per order, so orders are counted with distinct `order_id`.
+- Payments and reviews are order-grain; they are aggregated before joining to avoid multiplying monetary values.
+- Revenue measures use delivered orders only; missing categories are labelled `unknown`.
+- Power BI measures that read model scores use the held-out test set only.
+- Raw and processed CSVs, local credentials and `.pbix` files are excluded from Git.
 
 ---
 
 ## Scope and limitations
 
-- The current data is **synthetic**, generated locally for portfolio demonstration and repeatable development.
-- Olist-style filenames are used for compatibility with the pipeline structure; this does not mean the current results were calculated from the original Kaggle Olist records.
-- Synthetic results demonstrate analytical methods and should not be presented as real market research or evidence about actual customers.
-- Gross order-item value is a business metric defined for this project, not audited accounting revenue.
-- Historical customer value is descriptive and is not a predictive CLV model.
-- A churn prediction model, production deployment, automated report delivery and Power BI Service publication are outside the current implemented scope.
+- Results describe the Olist dataset (Brazil, 2016 to 2018) and should not be generalised to other markets or periods.
+- Gross order-item value is a project-defined metric, not audited revenue.
+- Customer value is historical and descriptive, not a predictive lifetime-value model.
+- Model quality is measured on one chronological hold-out of one public dataset; the late-delivery model ranks risk well
+  but is not perfectly calibrated, and the repeat-purchase model has little predictive power.
+- Production deployment, real-time scoring, automated report refresh and Power BI Service publication are outside the current scope.
 
 ---
 
-##  Tests
-
-Run the available tests from the repository root:
+## Tests and CI
 
 ```bash
-python -m pytest
+python -m pytest -q
+ruff check .
 ```
 
-If `pytest` is not installed in the environment:
-
-```bash
-pip install pytest
-```
+GitHub Actions runs lint and tests on every push (`.github/workflows/ci.yml`).
 
 ---
 
----
-
-##  Author
+## Author
 
 **Fariha Taneem**
 Computer Science & Engineering · Data Analytics · AI/ML · Cloud
 
-[GitHub](https://github.com/Fariha12t) · [Project Repository](https://github.com/Fariha12t/ecommerce-customer-revenue-intelligence)
+[GitHub](https://github.com/Fariha12t) · [LinkedIn](https://www.linkedin.com/in/fariha-taneem-249927253/)
 
 ---
 
